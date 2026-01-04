@@ -106,6 +106,16 @@ local curseBtn  = makeButton("Body Curse", y) y+=g
 local espBtn    = makeButton("ESP OFF", y) y+=g
 local flingBtn  = makeButton("Fling OFF", y) y+=g
 
+-- NOCIP BUTTON
+local noclipOn = false
+local noclipBtn = makeButton("Noclip OFF", y) y+=g
+
+noclipBtn.MouseButton1Click:Connect(function()
+	noclipOn = not noclipOn
+	noclipBtn.Text = noclipOn and "Noclip ON" or "Noclip OFF"
+	noclipBtn.BackgroundColor3 = noclipOn and Color3.fromRGB(0,120,0) or Color3.fromRGB(30,30,30)
+end)
+
 -- FLY BUTTON + SPEED TEXTBOX
 local flyBtn = makeButton("Fly OFF", y)
 local flySpeedBox = Instance.new("TextBox", frame)
@@ -300,6 +310,7 @@ end)
 
 -- Movement update
 RunService.RenderStepped:Connect(function()
+	-- FLY
 	if flyOn and hrp and bv and bg then
 		local dir = Vector3.zero
 		if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
@@ -311,5 +322,20 @@ RunService.RenderStepped:Connect(function()
 
 		bv.Velocity = dir.Magnitude > 0 and dir.Unit * flySpeed or Vector3.zero
 		bg.CFrame = CFrame.new(hrp.Position, hrp.Position + cam.CFrame.LookVector)
+	end
+
+	-- NOCLIP
+	if noclipOn and char then
+		for _, part in ipairs(char:GetDescendants()) do
+			if part:IsA("BasePart") and part.CanCollide then
+				part.CanCollide = false
+			end
+		end
+	elseif char then
+		for _, part in ipairs(char:GetDescendants()) do
+			if part:IsA("BasePart") and not part.CanCollide then
+				part.CanCollide = true
+			end
+		end
 	end
 end)
