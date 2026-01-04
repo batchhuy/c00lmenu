@@ -40,7 +40,7 @@ frame.Draggable = true
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0,14)
 
 local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(0,255,255)
+stroke.Color = Color3.fromRGB(255,0,0)
 stroke.Thickness = 3
 
 -- =========================
@@ -53,7 +53,7 @@ credit.BackgroundTransparency = 1
 credit.Text = "Made by: account_c00l and 125234dsdad"
 credit.Font = Enum.Font.GothamBold
 credit.TextScaled = true
-credit.TextColor3 = Color3.fromRGB(0,255,255)
+credit.TextColor3 = Color3.fromRGB(255,0,0)
 
 -- =========================
 -- UI HELPERS
@@ -72,7 +72,7 @@ local function makeButton(text, y)
 	b.BorderSizePixel = 0
 	Instance.new("UICorner", b).CornerRadius = UDim.new(0,10)
 	local s = Instance.new("UIStroke", b)
-	s.Color = Color3.fromRGB(0,255,255)
+	s.Color = Color3.fromRGB(255,0,0)
 	s.Thickness = 2
 	return b
 end
