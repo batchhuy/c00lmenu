@@ -146,6 +146,7 @@ Instance.new("UICorner", flyPlus).CornerRadius = UDim.new(0,8)
 
 y+=g
 
+local noclipBtn = makeButton("Noclip OFF", y) y+=g
 local aimbotBtn = makeButton("Aimbot OFF", y) y+=g
 
 -- =========================
@@ -277,7 +278,7 @@ flingBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =========================
--- FLY (FIXED)
+-- FLY
 -- =========================
 
 local flyOn = false
@@ -285,11 +286,11 @@ local flySpeed = 70
 local bv, bg
 
 flyPlus.MouseButton1Click:Connect(function()
-	flySpeed += 10
+	flySpeed += 5
 end)
 
 flyMinus.MouseButton1Click:Connect(function()
-	flySpeed = math.max(0, flySpeed - 10)
+	flySpeed = math.max(0, flySpeed - 5)
 end)
 
 flyBtn.MouseButton1Click:Connect(function()
@@ -321,11 +322,37 @@ RunService.RenderStepped:Connect(function()
 		if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
 		if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.new(0,1,0) end
 		if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir -= Vector3.new(0,1,0) end
-		bv.Velocity = dir.Unit * flySpeed
-		if dir.Magnitude == 0 then
-			bv.Velocity = Vector3.zero
-		end
+		bv.Velocity = dir.Magnitude > 0 and dir.Unit * flySpeed or Vector3.zero
 		bg.CFrame = CFrame.new(hrp.Position, hrp.Position + cam.CFrame.LookVector)
+	end
+end)
+
+-- =========================
+-- NOCLIP (FIXED INSTANT)
+-- =========================
+
+local noclipOn = false
+noclipBtn.MouseButton1Click:Connect(function()
+	noclipOn = not noclipOn
+	noclipBtn.Text = noclipOn and "Noclip ON" or "Noclip OFF"
+	noclipBtn.BackgroundColor3 = noclipOn and Color3.fromRGB(0,120,0) or Color3.fromRGB(30,30,30)
+
+	if not noclipOn and char then
+		for _, part in pairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = true
+			end
+		end
+	end
+end)
+
+RunService.Stepped:Connect(function()
+	if noclipOn and char then
+		for _, part in pairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = false
+			end
+		end
 	end
 end)
 
