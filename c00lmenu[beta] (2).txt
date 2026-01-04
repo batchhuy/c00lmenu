@@ -31,7 +31,7 @@ local gui = Instance.new("ScreenGui", game.CoreGui)
 gui.Name = "C00lmenu"
 
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 380, 0, 600)
+frame.Size = UDim2.new(0, 380, 0, 650)
 frame.Position = UDim2.new(0, 20, 0.2, 0)
 frame.BackgroundColor3 = Color3.fromRGB(15,15,15)
 frame.BorderSizePixel = 0
@@ -43,9 +43,7 @@ local stroke = Instance.new("UIStroke", frame)
 stroke.Color = Color3.fromRGB(255,0,0)
 stroke.Thickness = 3
 
--- =========================
--- UPDATED CREDIT
--- =========================
+-- CREDIT
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1,0,0,22)
 credit.Position = UDim2.new(0,0,0,6)
@@ -55,10 +53,7 @@ credit.Font = Enum.Font.GothamBold
 credit.TextScaled = true
 credit.TextColor3 = Color3.fromRGB(255,0,0)
 
--- =========================
--- UI HELPERS
--- =========================
-
+-- UI HELPER
 local function makeButton(text, y)
 	local b = Instance.new("TextButton", frame)
 	b.Size = UDim2.new(0,300,0,38)
@@ -77,10 +72,7 @@ local function makeButton(text, y)
 	return b
 end
 
--- =========================
 -- TELEPORT
--- =========================
-
 local tpBox = Instance.new("TextBox", frame)
 tpBox.Size = UDim2.new(0,300,0,36)
 tpBox.Position = UDim2.new(0.5,0,0.065,0)
@@ -102,10 +94,7 @@ tpBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
--- =========================
 -- BUTTONS
--- =========================
-
 local y = 0.255
 local g = 0.075
 
@@ -117,54 +106,48 @@ local curseBtn  = makeButton("Body Curse", y) y+=g
 local espBtn    = makeButton("ESP OFF", y) y+=g
 local flingBtn  = makeButton("Fling OFF", y) y+=g
 
--- ===== Fly buttons (−  Fly  +) =====
-local flyMinus = Instance.new("TextButton", frame)
-flyMinus.Size = UDim2.new(0,38,0,38)
-flyMinus.Position = UDim2.new(0.5, -170, y, 0)
-flyMinus.AnchorPoint = Vector2.new(0.5,0)
-flyMinus.Text = "-"
-flyMinus.Font = Enum.Font.GothamBold
-flyMinus.TextScaled = true
-flyMinus.TextColor3 = Color3.new(1,1,1)
-flyMinus.BackgroundColor3 = Color3.fromRGB(30,30,30)
-flyMinus.BorderSizePixel = 0
-Instance.new("UICorner", flyMinus).CornerRadius = UDim.new(0,8)
-
+-- FLY BUTTON + SPEED TEXTBOX
 local flyBtn = makeButton("Fly OFF", y)
+local flySpeedBox = Instance.new("TextBox", frame)
+flySpeedBox.Size = UDim2.new(0,80,0,38)
+flySpeedBox.Position = UDim2.new(0.5, 160, y, 0)
+flySpeedBox.AnchorPoint = Vector2.new(0.5,0)
+flySpeedBox.PlaceholderText = "70"
+flySpeedBox.Font = Enum.Font.Gotham
+flySpeedBox.TextScaled = true
+flySpeedBox.BackgroundColor3 = Color3.fromRGB(25,25,25)
+flySpeedBox.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", flySpeedBox).CornerRadius = UDim.new(0,8)
 
-local flyPlus = Instance.new("TextButton", frame)
-flyPlus.Size = UDim2.new(0,38,0,38)
-flyPlus.Position = UDim2.new(0.5, 170, y, 0)
-flyPlus.AnchorPoint = Vector2.new(0.5,0)
-flyPlus.Text = "+"
-flyPlus.Font = Enum.Font.GothamBold
-flyPlus.TextScaled = true
-flyPlus.TextColor3 = Color3.new(1,1,1)
-flyPlus.BackgroundColor3 = Color3.fromRGB(30,30,30)
-flyPlus.BorderSizePixel = 0
-Instance.new("UICorner", flyPlus).CornerRadius = UDim.new(0,8)
+-- DASH BUTTON
+local dashBtn = makeButton("Dash", y+0.075) y+=g
+dashBtn.MouseButton1Click:Connect(function()
+	local char = player.Character
+	local hrp = char and char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
 
-y+=g
+	local lookVector = hrp.CFrame.LookVector
+	local distance = 10
+	local speed = 100
+	local traveled = 0
 
-local noclipBtn = makeButton("Noclip OFF", y) y+=g
-local aimbotBtn = makeButton("Aimbot OFF", y) y+=g
+	while traveled < distance do
+		RunService.RenderStepped:Wait()
+		local step = math.min(speed * RunService.RenderStepped:Wait(), distance - traveled)
+		hrp.CFrame = hrp.CFrame + lookVector * step
+		traveled = traveled + step
+	end
+end)
 
--- =========================
--- SPEED / JUMP
--- =========================
-
+-- SPEED / JUMP BUTTONS
 speedUp.MouseButton1Click:Connect(function() hum.WalkSpeed += 5 end)
 speedDown.MouseButton1Click:Connect(function() hum.WalkSpeed = math.max(0, hum.WalkSpeed - 5) end)
 jumpUp.MouseButton1Click:Connect(function() hum.JumpPower += 5 end)
 jumpDown.MouseButton1Click:Connect(function() hum.JumpPower = math.max(0, hum.JumpPower - 5) end)
 
--- =========================
 -- BODY CURSE
--- =========================
-
 local cursed = false
 local saved = {}
-
 curseBtn.MouseButton1Click:Connect(function()
 	cursed = not cursed
 	for _,v in ipairs(char:GetDescendants()) do
@@ -181,10 +164,7 @@ curseBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
--- =========================
 -- ESP
--- =========================
-
 local espOn = false
 local espObjs = {}
 
@@ -232,13 +212,9 @@ espBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
--- =========================
--- FLING (HIDDEN FLING)
--- =========================
-
+-- FLING
 local hiddenfling = false
 local flingThread
-
 if not ReplicatedStorage:FindFirstChild("juisdfj0i32i0eidsuf0iok") then
     local detection = Instance.new("Decal")
     detection.Name = "juisdfj0i32i0eidsuf0iok"
@@ -248,12 +224,10 @@ end
 local function fling()
 	local lp = Players.LocalPlayer
 	local c, hrp, vel, movel = nil, nil, nil, 0.1
-
 	while hiddenfling do
 		RunService.Heartbeat:Wait()
 		c = lp.Character
 		hrp = c and c:FindFirstChild("HumanoidRootPart")
-
 		if hrp then
 			vel = hrp.Velocity
 			hrp.Velocity = vel * 10000 + Vector3.new(0,10000,0)
@@ -278,34 +252,31 @@ flingBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =========================
--- FLY
+-- FLY (FIXED FINAL)
 -- =========================
 
 local flyOn = false
-local flySpeed = 70
+local flySpeed = 70 -- default
 local bv, bg
 
-flyPlus.MouseButton1Click:Connect(function()
-	flySpeed += 5
-end)
-
-flyMinus.MouseButton1Click:Connect(function()
-	flySpeed = math.max(0, flySpeed - 5)
-end)
-
+-- Fly toggle button
 flyBtn.MouseButton1Click:Connect(function()
 	flyOn = not flyOn
 	flyBtn.Text = flyOn and "Fly ON" or "Fly OFF"
 	flyBtn.BackgroundColor3 = flyOn and Color3.fromRGB(0,120,0) or Color3.fromRGB(30,30,30)
 
 	if flyOn then
-		bv = Instance.new("BodyVelocity", hrp)
-		bv.MaxForce = Vector3.new(1e9,1e9,1e9)
-		bv.Velocity = Vector3.zero
-		bg = Instance.new("BodyGyro", hrp)
-		bg.MaxTorque = Vector3.new(1e9,1e9,1e9)
-		bg.CFrame = hrp.CFrame
-		hum.PlatformStand = true
+		if hrp then
+			bv = Instance.new("BodyVelocity", hrp)
+			bv.MaxForce = Vector3.new(1e9,1e9,1e9)
+			bv.Velocity = Vector3.zero
+
+			bg = Instance.new("BodyGyro", hrp)
+			bg.MaxTorque = Vector3.new(1e9,1e9,1e9)
+			bg.CFrame = hrp.CFrame
+
+			hum.PlatformStand = true
+		end
 	else
 		if bv then bv:Destroy() end
 		if bg then bg:Destroy() end
@@ -313,8 +284,23 @@ flyBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
+-- Fly speed textbox (fully fixed)
+flySpeedBox.ClearTextOnFocus = true
+flySpeedBox.Focused:Connect(function()
+	flySpeedBox.Text = ""
+end)
+flySpeedBox.Changed:Connect(function(property)
+	if property == "Text" then
+		local value = tonumber(flySpeedBox.Text)
+		if value and value > 0 then
+			flySpeed = value
+		end
+	end
+end)
+
+-- Movement update
 RunService.RenderStepped:Connect(function()
-	if flyOn and bv and bg then
+	if flyOn and hrp and bv and bg then
 		local dir = Vector3.zero
 		if UIS:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
 		if UIS:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
@@ -322,70 +308,8 @@ RunService.RenderStepped:Connect(function()
 		if UIS:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
 		if UIS:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.new(0,1,0) end
 		if UIS:IsKeyDown(Enum.KeyCode.LeftShift) then dir -= Vector3.new(0,1,0) end
+
 		bv.Velocity = dir.Magnitude > 0 and dir.Unit * flySpeed or Vector3.zero
 		bg.CFrame = CFrame.new(hrp.Position, hrp.Position + cam.CFrame.LookVector)
-	end
-end)
-
--- =========================
--- NOCLIP (FIXED INSTANT)
--- =========================
-
-local noclipOn = false
-noclipBtn.MouseButton1Click:Connect(function()
-	noclipOn = not noclipOn
-	noclipBtn.Text = noclipOn and "Noclip ON" or "Noclip OFF"
-	noclipBtn.BackgroundColor3 = noclipOn and Color3.fromRGB(0,120,0) or Color3.fromRGB(30,30,30)
-
-	if not noclipOn and char then
-		for _, part in pairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = true
-			end
-		end
-	end
-end)
-
-RunService.Stepped:Connect(function()
-	if noclipOn and char then
-		for _, part in pairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = false
-			end
-		end
-	end
-end)
-
--- =========================
--- AIMBOT (SMOOTH CLICK)
--- =========================
-
-local aimbotOn = false
-local aimTarget = nil
-local smoothness = 0.15
-
-aimbotBtn.MouseButton1Click:Connect(function()
-	aimbotOn = not aimbotOn
-	aimTarget = nil
-	aimbotBtn.Text = aimbotOn and "Aimbot ON" or "Aimbot OFF"
-	aimbotBtn.BackgroundColor3 = aimbotOn and Color3.fromRGB(0,120,0) or Color3.fromRGB(30,30,30)
-end)
-
-mouse.Button1Down:Connect(function()
-	if not aimbotOn then return end
-	local part = mouse.Target
-	if not part then return end
-	local model = part:FindFirstAncestorWhichIsA("Model")
-	local plr = Players:GetPlayerFromCharacter(model)
-	if plr and plr ~= player and model:FindFirstChild("Head") then
-		aimTarget = model.Head
-	end
-end)
-
-RunService.RenderStepped:Connect(function()
-	if aimbotOn and aimTarget and aimTarget.Parent then
-		local camPos = cam.CFrame.Position
-		local targetCF = CFrame.new(camPos, aimTarget.Position)
-		cam.CFrame = cam.CFrame:Lerp(targetCF, smoothness)
 	end
 end)
